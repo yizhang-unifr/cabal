@@ -568,6 +568,7 @@ baseSavedConfig = do
 --
 initialSavedConfig :: IO SavedConfig
 initialSavedConfig = do
+<<<<<<< HEAD
   cacheDir    <- defaultCacheDir
   logsDir     <- defaultLogsDir
   extraPath   <- defaultExtraPath
@@ -589,6 +590,29 @@ initialSavedConfig = do
       cinstInstalldir = toFlag installPath
     }
   }
+=======
+  cacheDir <- defaultCacheDir
+  logsDir <- defaultLogsDir
+  installPath <- defaultInstallPath
+  return
+    mempty
+      { savedGlobalFlags =
+          mempty
+            { globalCacheDir = toFlag cacheDir
+            , globalRemoteRepos = toNubList [defaultRemoteRepo]
+            }
+      , savedInstallFlags =
+          mempty
+            { installSummaryFile = toNubList [toPathTemplate (logsDir </> "build.log")]
+            , installBuildReports = toFlag NoReports
+            , installNumJobs = toFlag Nothing
+            }
+      , savedClientInstallFlags =
+          mempty
+            { cinstInstalldir = toFlag installPath
+            }
+      }
+>>>>>>> ea55955ed (Don't add `extra-prog-path` to `~/.config/cabal/config` (#8951))
 
 -- | Issue a warning if both @$XDG_CONFIG_HOME/cabal/config@ and
 -- @~/.cabal@ exists.
@@ -673,16 +697,6 @@ defaultLogsDir =
 defaultReportsDir :: IO FilePath
 defaultReportsDir =
   getDefaultDir XdgCache "reports"
-
-defaultExtraPath :: IO [FilePath]
-defaultExtraPath = do
-  mDir <- maybeGetCabalDir
-  case mDir of
-    Just dir ->
-      return [dir </> "bin"]
-    Nothing -> do
-      dir <- getHomeDirectory
-      return [dir </> ".local" </> "bin"]
 
 defaultInstallPath :: IO FilePath
 defaultInstallPath = do
